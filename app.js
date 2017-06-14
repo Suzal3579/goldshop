@@ -5,6 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressHBS = require("express-handlebars");
+var mongoose = require("mongoose");
+mongoose.connect("localhost:27017/goldshop");
+
+let ShopSchema = new Schema;
+
 
 var index = require('./routes/index');
 
