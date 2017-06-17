@@ -17,6 +17,8 @@ passport.use("local.signup", new localstat({
     passwordField: "password",
     passReqToCallback: true
 }, (req, email, password, done) => {
+    req.checkBody("email", "Invalid E-mail.").notEmpty().isEmail();
+    req.checkBody("password", "Invalid password.").notEmpty().isLength({ min: 4 });
     userModel.findOne({ "email": email }, (error, user) => {
         if (error) {
             return done(error);

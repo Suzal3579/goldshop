@@ -9,6 +9,7 @@ let mongoose = require("mongoose");
 let session = require("express-session");
 let passport = require("passport");
 let flash = require("connect-flash");
+let expressValid = require("express-validator");
 
 
 let index = require('./routes/index');
@@ -29,6 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+app.use(expressValid());
 app.use(cookieParser());
 app.use(session({ secret: "sercet", resave: false, saveUninitialized: false }));
 app.use(flash());
