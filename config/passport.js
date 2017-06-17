@@ -19,6 +19,14 @@ passport.use("local.signup", new localstat({
 }, (req, email, password, done) => {
     req.checkBody("email", "Invalid E-mail.").notEmpty().isEmail();
     req.checkBody("password", "Invalid password.").notEmpty().isLength({ min: 4 });
+    let errors = req.validationErrors();
+    if (errors) {
+        let mesg = [];
+        errors.forEach((error) => {
+            mesg.push(error.msg);
+        });
+        return done(null, false, req.flash("error", mesg));
+    }
     userModel.findOne({ "email": email }, (error, user) => {
         if (error) {
             return done(error);
