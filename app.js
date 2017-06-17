@@ -1,17 +1,22 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var expressHBS = require("express-handlebars");
-var mongoose = require("mongoose");
+let express = require('express');
+let path = require('path');
+let favicon = require('serve-favicon');
+let logger = require('morgan');
+let cookieParser = require('cookie-parser');
+let bodyParser = require('body-parser');
+let expressHBS = require("express-handlebars");
+let mongoose = require("mongoose");
+let session = require("express-session");
+let passport = require("passport");
+let flash = require("connect-flash");
 
-var index = require('./routes/index');
 
-var app = express();
+let index = require('./routes/index');
+
+let app = express();
 
 mongoose.connect("localhost:27017/goldshop");
+require("./config/passport");
 
 // view engine setup
 app.engine(".hbs", expressHBS({ defaultLayout: "layout", extname: ".hbs", }));
@@ -25,13 +30,17 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
+app.use(session({ secret: "sercet", resave: false, saveUninitialized: false }));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
+    let err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
