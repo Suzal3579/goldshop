@@ -5,10 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressHBS = require("express-handlebars");
+var mongoose = require("mongoose");
 
 var index = require('./routes/index');
 
 var app = express();
+
+mongoose.connect("localhost:27017/goldshop");
 
 // view engine setup
 app.engine(".hbs", expressHBS({ defaultLayout: "layout", extname: ".hbs", }));
