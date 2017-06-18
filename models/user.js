@@ -11,7 +11,8 @@ userSchema.methods.encryptPass = (password) => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(5), null);
 };
 
-userSchema.methods.validPassword = (password) => {
+userSchema.methods.validPassword = function (password) {
+    // Do not use arrow function here .... code will break horribly :D experience ....
     return bcrypt.compareSync(password, this.password);
 };
 
