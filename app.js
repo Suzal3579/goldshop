@@ -10,8 +10,9 @@ let session = require("express-session");
 let passport = require("passport");
 let flash = require("connect-flash");
 let expressValid = require("express-validator");
+let MongoSessionStorage = require("connect-mongo")(session);
 
-
+let userRoutes = require("./routes/user");
 let index = require('./routes/index');
 
 let app = express();
@@ -32,12 +33,27 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(expressValid());
 app.use(cookieParser());
-app.use(session({ secret: "sercet", resave: false, saveUninitialized: false }));
+app.use(session({
+    secret: "sercet",
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoSessionStorage({
+        mongooseConnection: mongoose.connection,
+        // to be continuse later from here ....
+
+    })
+}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+    res.locals.login = req.isAuthenticated();
+    next();
+});
+
+app.use("/user", userRoutes);
 app.use('/', index);
 
 // catch 404 and forward to error handler
