@@ -39,9 +39,8 @@ app.use(session({
     saveUninitialized: false,
     store: new MongoSessionStorage({
         mongooseConnection: mongoose.connection,
-        // to be continuse later from here ....
-
-    })
+    }),
+    cookie: { maxAge: 180 * 60 * 1000 }
 }));
 app.use(flash());
 app.use(passport.initialize());
@@ -50,6 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
     res.locals.login = req.isAuthenticated();
+    res.locals.session = req.session;
     next();
 });
 
