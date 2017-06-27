@@ -1,0 +1,25 @@
+{
+    "_id": "5951f93179217a05a8b2be1b",
+    "cart": {
+        "items": {
+            "5944ce845f51ab2900959968": {
+                "item": {
+                    "_id": "5944ce845f51ab2900959968",
+                    "imagePath": "http://7bna.net/images/gold-images/gold-images-10.jpg",
+                    "title": "Pramesh",
+                    "description": "Suzal",
+                    "price": 12000,
+                    "__v": 0
+                },
+                "quantity": 1,
+                "price": 12000
+            }
+        },
+        "totalQuantity": 1,
+        "totalPrice": 12000
+    },
+    "address": "htat",
+    "name": "this",
+    "paymentId": "ch_1AZD3sEf1Y2U8lKZOTFsVsCp",
+    "__v": 0
+}

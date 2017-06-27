@@ -92,7 +92,7 @@ function isLoggedIn(req, res, next) {
         // continue garrney ...
         return next();
     }
-    res.session.oldUrl = req.url;
+    req.session.oldUrl = req.url;
     // else send to signin page ...
     res.redirect("/user/signin");
 }
