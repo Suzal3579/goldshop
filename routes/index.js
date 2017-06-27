@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 let productInstance = require("../models/product");
 let cartInstance = require("../models/cart");
+let orderInstance = require("../models/order");
 
 router.get('/', function (req, res, next) {
     let successMsg = req.flash("success")[0];
@@ -28,7 +29,6 @@ router.get("/add-to-cart/:id", (req, res, next) => {
         }
         cart.add(product, product.id);
         req.session.cart = cart;
-        console.log(req.session.cart);
         res.redirect("/");
     });
 });
@@ -41,7 +41,7 @@ router.get("/shopping-cart", (req, res, next) => {
     res.render("shop/shopping-cart", { products: cart.generateArray(), totalPrice: cart.totalPrice });
 });
 
-router.get("/checkout", (req, res, next) => {
+router.get("/checkout", isLoggedIn, (req, res, next) => {
     if (!req.session.cart) {
         return res.redirect("/shopping-cart");
     }
@@ -50,7 +50,7 @@ router.get("/checkout", (req, res, next) => {
     res.render("shop/checkout", { total: cart.totalPrice, errorMsg: errorMsg, noError: !errorMsg });
 });
 
-router.post("/checkout", (req, res, next) => {
+router.post("/checkout", isLoggedIn, (req, res, next) => {
     if (!req.session.cart) {
         return res.redirect("/shopping-cart");
     }
@@ -70,10 +70,29 @@ router.post("/checkout", (req, res, next) => {
             req.flash("error", err.message);
             return res.redirect("/checkout");
         }
-        req.flash("success", "Successfuly done");
-        req.session.cart = null;
-        res.redirect("/");
+        let order = new orderInstance({
+            user: req.user,
+            cart: cart,
+            address: req.body.address,
+            name: req.body.name,
+            paymentId: charge.id
+        });
+        order.save((error, result) => {
+            req.flash("success", "Successfuly done");
+            req.session.cart = null;
+            res.redirect("/");
+        });
     });
 });
 
 module.exports = router;
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        // continue garrney ...
+        return next();
+    }
+    res.session.oldUrl = req.url;
+    // else send to signin page ...
+    res.redirect("/user/signin");
+}
