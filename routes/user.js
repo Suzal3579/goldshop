@@ -11,7 +11,7 @@ router.use(csrfProtect);
 
 // this methods is here coz we dont want to apply isNotLoggedIn function to this single route ...
 router.get("/profile", isLoggedIn, (req, res, next) => {
-    orderInstance.find({ user: req.user }, (error, orders) => {
+    orderInstance.find({}, (error, orders) => {
         if (error) {
             res.write("Error");
         }
