@@ -4,12 +4,18 @@ let productInstance = require("../models/product");
 let cartInstance = require("../models/cart");
 
 router.get('/', function (req, res, next) {
+    let successMsg = req.flash("success")[0];
     productInstance.find((error, docs) => {
         let productChunk = [], chunkSize = 3;
         for (let i = 0; i < docs.length; i += chunkSize) {
             productChunk.push(docs.slice(i, i + chunkSize));
         }
-        res.render('shop/index', { title: 'Laxmi Ornaments', products: productChunk });
+        res.render('shop/index', {
+            title: 'Laxmi Ornaments',
+            products: productChunk,
+            successMsg: successMsg,
+            noMessage: !successMsg
+        });
     });
 });
 
@@ -40,7 +46,34 @@ router.get("/checkout", (req, res, next) => {
         return res.redirect("/shopping-cart");
     }
     let cart = new cartInstance(req.session.cart);
-    res.render("shop/checkout", { total: cart.totalPrice });
+    let errorMsg = req.flash("error")[0];
+    res.render("shop/checkout", { total: cart.totalPrice, errorMsg: errorMsg, noError: !errorMsg });
+});
+
+router.post("/checkout", (req, res, next) => {
+    if (!req.session.cart) {
+        return res.redirect("/shopping-cart");
+    }
+    let cart = new cartInstance(req.session.cart);
+    var stripe = require("stripe")(
+        "sk_test_UNbrtw70JLU5nVhHpIApD1tO"
+    );
+
+    stripe.charges.create({
+        amount: Math.ceil(cart.totalPrice / 103),
+        currency: "usd",
+        source: req.body.stripeToken, // obtained with Stripe.js
+        description: "Charge"
+    }, function (err, charge) {
+        // asynchronously called ...
+        if (err) {
+            req.flash("error", err.message);
+            return res.redirect("/checkout");
+        }
+        req.flash("success", "Successfuly done");
+        req.session.cart = null;
+        res.redirect("/");
+    });
 });
 
 module.exports = router;
