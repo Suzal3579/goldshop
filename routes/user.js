@@ -8,7 +8,6 @@ let cartInstance = require("../models/cart");
 let orderInstance = require("../models/order");
 // below lines like router.use() will be applied to all routes ...
 router.use(csrfProtect);
-
 // this methods is here coz we dont want to apply isNotLoggedIn function to this single route ...
 router.get("/profile", isLoggedIn, (req, res, next) => {
     orderInstance.find({}, (error, orders) => {
