@@ -85,6 +85,22 @@ router.post("/checkout", isLoggedIn, (req, res, next) => {
     });
 });
 
+router.get("/reduceByOne/:id", (req, res, next) => {
+    let productId = req.params.id;
+    let cart = new cartInstance(req.session.cart ? req.session.cart : {});
+    cart.reduceByOne(productId);
+    req.session.cart = cart;
+    res.redirect("/shopping-cart");
+});
+
+router.get("/removeItem/:id", (req, res, next) => {
+    let productId = req.params.id;
+    let cart = new cartInstance(req.session.cart ? req.session.cart : {});
+    cart.removeItem(productId);
+    req.session.cart = cart;
+    res.redirect("/shopping-cart");
+});
+
 module.exports = router;
 
 function isLoggedIn(req, res, next) {
